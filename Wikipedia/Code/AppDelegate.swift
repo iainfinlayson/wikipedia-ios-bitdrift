@@ -1,6 +1,8 @@
 import UIKit
 import BackgroundTasks
 import CocoaLumberjackSwift
+import Capture
+import CaptureCocoaLumberjack
 
 #if TEST
 // Avoids loading needless dependencies during unit tests
@@ -24,7 +26,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let appViewController = WMFAppViewController()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+
+        let apiKey = ProcessInfo.processInfo.environment["BITDRIFT_API_KEY"] ?? ""
+
+        Logger
+          .start(
+            withAPIKey: apiKey,
+            sessionStrategy: .fixed(),
+            apiURL: URL(string: "https://api.bitdrift.dev")!
+          )?
+          .enableIntegrations(
+            [.urlSession(), .cocoaLumberjack()], disableSwizzling: true)
+
         registerUserDefaults()
         
 #if DEBUG

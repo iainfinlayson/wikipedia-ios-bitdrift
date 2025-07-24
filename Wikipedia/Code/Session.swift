@@ -1,6 +1,7 @@
 import Foundation
 import CocoaLumberjackSwift
 import WMFData
+import Capture
 
 public enum WMFCachePolicy {
     case foundation(URLRequest.CachePolicy)
@@ -167,7 +168,11 @@ public class Session: NSObject {
         let config = URLSessionConfiguration.default
         config.httpCookieStorage = Session.defaultCookieStorage
         config.urlCache = permanentCacheController?.urlCache ?? URLCache.shared
-        return URLSession(configuration: config, delegate: delegate, delegateQueue: delegate.delegateQueue)
+        return URLSession(
+                    instrumentedSessionWithConfiguration: config,
+                    delegate: delegate,
+                    delegateQueue: delegate.delegateQueue
+                )
     }
     
     private let configuration: Configuration

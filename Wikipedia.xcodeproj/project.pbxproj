@@ -1618,6 +1618,8 @@
 		83FDE799293564AC006D55FE /* Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FDE798293564AC006D55FE /* Link.swift */; };
 		83FDE79A293564AC006D55FE /* Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FDE798293564AC006D55FE /* Link.swift */; };
 		83FDE79B293564AC006D55FE /* Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FDE798293564AC006D55FE /* Link.swift */; };
+		8741A2432E329A9600BD839B /* Capture in Frameworks */ = {isa = PBXBuildFile; productRef = 8741A2422E329A9600BD839B /* Capture */; };
+		8741A2452E329A9600BD839B /* CaptureCocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 8741A2442E329A9600BD839B /* CaptureCocoaLumberjack */; };
 		982800D624D302BF004B1850 /* EventPlatformClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982800D524D302BF004B1850 /* EventPlatformClient.swift */; };
 		A452F9F824081A5500D8ED09 /* MockCLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A452F9F624081A5500D8ED09 /* MockCLLocationManager.swift */; };
 		A452F9F924081A5500D8ED09 /* MockCLHeading.swift in Sources */ = {isa = PBXBuildFile; fileRef = A452F9F724081A5500D8ED09 /* MockCLHeading.swift */; };
@@ -4765,8 +4767,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D844D9731D6CB2600042D692 /* WMF.framework in Frameworks */,
+				8741A2452E329A9600BD839B /* CaptureCocoaLumberjack in Frameworks */,
 				83AF34F724D3341E000046D6 /* BackgroundTasks.framework in Frameworks */,
 				D8D553621DF1B63200B90177 /* QuartzCore.framework in Frameworks */,
+				8741A2432E329A9600BD839B /* Capture in Frameworks */,
 				D4E6D9121A5C65F9004916C1 /* CoreData.framework in Frameworks */,
 				D499143B181D51DE00E6073C /* CoreGraphics.framework in Frameworks */,
 				D499143D181D51DE00E6073C /* UIKit.framework in Frameworks */,
@@ -8858,6 +8862,8 @@
 			);
 			name = Wikipedia;
 			packageProductDependencies = (
+				8741A2422E329A9600BD839B /* Capture */,
+				8741A2442E329A9600BD839B /* CaptureCocoaLumberjack */,
 			);
 			productName = "Wikipedia-iOS";
 			productReference = D4991435181D51DE00E6073C /* Wikipedia.app */;
@@ -9223,6 +9229,7 @@
 			mainGroup = D499142C181D51DE00E6073C;
 			packageReferences = (
 				67A770C6251BFE0400F94EF9 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
+				8741A2412E329A7500BD839B /* XCRemoteSwiftPackageReference "capture-ios" */,
 			);
 			productRefGroup = D4991436181D51DE00E6073C /* Products */;
 			projectDirPath = "";
@@ -16793,6 +16800,14 @@
 				minimumVersion = 3.7.4;
 			};
 		};
+		8741A2412E329A7500BD839B /* XCRemoteSwiftPackageReference "capture-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bitdriftlabs/capture-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.17.29;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -16804,6 +16819,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 67A770C6251BFE0400F94EF9 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwift;
+		};
+		8741A2422E329A9600BD839B /* Capture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8741A2412E329A7500BD839B /* XCRemoteSwiftPackageReference "capture-ios" */;
+			productName = Capture;
+		};
+		8741A2442E329A9600BD839B /* CaptureCocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8741A2412E329A7500BD839B /* XCRemoteSwiftPackageReference "capture-ios" */;
+			productName = CaptureCocoaLumberjack;
 		};
 /* End XCSwiftPackageProductDependency section */
 
