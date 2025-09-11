@@ -1620,6 +1620,12 @@
 		83FDE79B293564AC006D55FE /* Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FDE798293564AC006D55FE /* Link.swift */; };
 		8741A2432E329A9600BD839B /* Capture in Frameworks */ = {isa = PBXBuildFile; productRef = 8741A2422E329A9600BD839B /* Capture */; };
 		8741A2452E329A9600BD839B /* CaptureCocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 8741A2442E329A9600BD839B /* CaptureCocoaLumberjack */; };
+		87B45B5D2E735E87000B9CEE /* LeakSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B45B5C2E735E7B000B9CEE /* LeakSimulator.swift */; };
+		87B45B5E2E735E87000B9CEE /* LeakSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B45B5C2E735E7B000B9CEE /* LeakSimulator.swift */; };
+		87B45B5F2E735E87000B9CEE /* LeakSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B45B5C2E735E7B000B9CEE /* LeakSimulator.swift */; };
+		87B45B612E735E97000B9CEE /* DebugMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B45B602E735E90000B9CEE /* DebugMenuViewController.swift */; };
+		87B45B622E735E97000B9CEE /* DebugMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B45B602E735E90000B9CEE /* DebugMenuViewController.swift */; };
+		87B45B632E735E97000B9CEE /* DebugMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B45B602E735E90000B9CEE /* DebugMenuViewController.swift */; };
 		982800D624D302BF004B1850 /* EventPlatformClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982800D524D302BF004B1850 /* EventPlatformClient.swift */; };
 		A452F9F824081A5500D8ED09 /* MockCLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A452F9F624081A5500D8ED09 /* MockCLLocationManager.swift */; };
 		A452F9F924081A5500D8ED09 /* MockCLHeading.swift in Sources */ = {isa = PBXBuildFile; fileRef = A452F9F724081A5500D8ED09 /* MockCLHeading.swift */; };
@@ -3788,6 +3794,8 @@
 		83FBE9741F6181E00026C7EB /* ShareAFactActivityImageItemProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareAFactActivityImageItemProvider.swift; sourceTree = "<group>"; };
 		83FD0A5B29913A4D00D459A8 /* Wikipedia 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Wikipedia 7.xcdatamodel"; sourceTree = "<group>"; };
 		83FDE798293564AC006D55FE /* Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Link.swift; sourceTree = "<group>"; };
+		87B45B5C2E735E7B000B9CEE /* LeakSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeakSimulator.swift; sourceTree = "<group>"; };
+		87B45B602E735E90000B9CEE /* DebugMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuViewController.swift; sourceTree = "<group>"; };
 		982800D524D302BF004B1850 /* EventPlatformClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPlatformClient.swift; sourceTree = "<group>"; };
 		A452F9F624081A5500D8ED09 /* MockCLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockCLLocationManager.swift; sourceTree = "<group>"; };
 		A452F9F724081A5500D8ED09 /* MockCLHeading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockCLHeading.swift; sourceTree = "<group>"; };
@@ -6891,6 +6899,15 @@
 			name = "Formatting Toolbar";
 			sourceTree = "<group>";
 		};
+		87B45B5B2E735E30000B9CEE /* bitdriftdev */ = {
+			isa = PBXGroup;
+			children = (
+				87B45B602E735E90000B9CEE /* DebugMenuViewController.swift */,
+				87B45B5C2E735E7B000B9CEE /* LeakSimulator.swift */,
+			);
+			path = bitdriftdev;
+			sourceTree = "<group>";
+		};
 		A452F9F524081A3400D8ED09 /* MockLocationManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -7561,6 +7578,7 @@
 		BC7C3A371C0FF94A0057F023 /* Code */ = {
 			isa = PBXGroup;
 			children = (
+				87B45B5B2E735E30000B9CEE /* bitdriftdev */,
 				83796B012C9C6F6000E55C69 /* Coordinators */,
 				D84C36461F32485E00895FA1 /* Model */,
 				D818D37F1ED725240076110D /* View Controllers */,
@@ -9952,6 +9970,7 @@
 				8361474B24223689003E49D3 /* ArticleViewController+Announcements.swift in Sources */,
 				B0524B29214854E900D8FD8D /* DescriptionWelcomePanelViewController.swift in Sources */,
 				7A1C498F227254EC00230ED2 /* InsertMediaSearchViewController.swift in Sources */,
+				87B45B622E735E97000B9CEE /* DebugMenuViewController.swift in Sources */,
 				D8A6BAED1E4C9BF400A981C8 /* UserLocationAnnotationView.swift in Sources */,
 				00E75B5D27EB874A00A45B78 /* NotificationsCenterDetailViewController.swift in Sources */,
 				6798331A22C174ED0073CE6F /* LinkOnlyTextView.swift in Sources */,
@@ -10374,6 +10393,7 @@
 				7A6ED51720ADBF950001849F /* UserHistoryFunnel.swift in Sources */,
 				7A1C4995227265CD00230ED2 /* InsertMediaSelectedImageViewController.swift in Sources */,
 				7A71566E22697AAF0066FEC4 /* InsertMediaCustomImageSizeSettingTableViewCell.swift in Sources */,
+				87B45B5E2E735E87000B9CEE /* LeakSimulator.swift in Sources */,
 				D858C7B6210B91CD0039E0C9 /* PassthroughView.swift in Sources */,
 				83FBE9751F6181E00026C7EB /* ShareAFactActivityImageItemProvider.swift in Sources */,
 				D8A47C8A23D728A4002AA823 /* ArticleTableOfContentsDisplayController.swift in Sources */,
@@ -10960,6 +10980,7 @@
 				0072990D28AC455500DCD2E6 /* TalkPageCellViewModel.swift in Sources */,
 				D8CE24FE1E698E2400DAE2E0 /* UIViewController+WMFAlerts.swift in Sources */,
 				7A741DCB207FB9CC00CBAAE2 /* SearchBarExtendedViewController.swift in Sources */,
+				87B45B612E735E97000B9CEE /* DebugMenuViewController.swift in Sources */,
 				7ADF853723516CF500500ADC /* PageHistoryHintController.swift in Sources */,
 				D8CE24FF1E698E2400DAE2E0 /* NSDate+WMFPOTDTitle.m in Sources */,
 				D8CE25001E698E2400DAE2E0 /* WMFTableHeaderFooterLabelView.m in Sources */,
@@ -11422,6 +11443,7 @@
 				D8CE260C1E698E2400DAE2E0 /* MapUtilities.swift in Sources */,
 				678D79FD235E59B2006161FF /* DiffListUneditedViewModel.swift in Sources */,
 				3717C38D2CAB2A0D00978DB2 /* YearInReviewCoordinator.swift in Sources */,
+				87B45B5D2E735E87000B9CEE /* LeakSimulator.swift in Sources */,
 				67134A1928A73C0A00BA0BB9 /* TalkPageReplyComposeController.swift in Sources */,
 				D8CE26101E698E2400DAE2E0 /* UIViewController+WMFStoryboardUtilities.swift in Sources */,
 				B0016CBA21354D9D00FA1096 /* AutoLayoutSafeMultiLineButton.swift in Sources */,
@@ -11518,6 +11540,7 @@
 				D8EC3DF21E9BDA35006712EB /* WMFWelcomePanelViewController.swift in Sources */,
 				0072990C28AC455500DCD2E6 /* TalkPageCellViewModel.swift in Sources */,
 				67DDD188250C1A27006C0F93 /* ThreeLineHeaderView.swift in Sources */,
+				87B45B632E735E97000B9CEE /* DebugMenuViewController.swift in Sources */,
 				D8533ED71ECF581600E44F86 /* NewsCollectionViewHeader.swift in Sources */,
 				7ADF853823516CF500500ADC /* PageHistoryHintController.swift in Sources */,
 				7A741DCC207FB9CC00CBAAE2 /* SearchBarExtendedViewController.swift in Sources */,
@@ -11980,6 +12003,7 @@
 				D8EC3F0B1E9BDA35006712EB /* MapUtilities.swift in Sources */,
 				678D79FE235E59B2006161FF /* DiffListUneditedViewModel.swift in Sources */,
 				3717C38C2CAB2A0D00978DB2 /* YearInReviewCoordinator.swift in Sources */,
+				87B45B5F2E735E87000B9CEE /* LeakSimulator.swift in Sources */,
 				67134A1828A73C0A00BA0BB9 /* TalkPageReplyComposeController.swift in Sources */,
 				D8EC3F0F1E9BDA35006712EB /* UIViewController+WMFStoryboardUtilities.swift in Sources */,
 				B0016CBB21354D9D00FA1096 /* AutoLayoutSafeMultiLineButton.swift in Sources */,
@@ -16804,8 +16828,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/bitdriftlabs/capture-ios.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.17.29;
+				kind = exactVersion;
+				version = 0.18.8;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

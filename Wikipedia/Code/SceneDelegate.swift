@@ -21,6 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     private var appNeedsResume = true
+    // bitdriftdev: keep a handle so we can reset around presentation
+    private var debugMenuRecognizer: UILongPressGestureRecognizer?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
@@ -47,6 +49,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         UNUserNotificationCenter.current().delegate = appViewController
         appViewController.launchApp(in: window, waitToResumeApp: appNeedsResume)
+
+        // === bitdriftdev: one-finger long-press (bottom-right safe corner) to open Debug Menu ===
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(showDebugMenuSafeCorner(_:)))
+        longPress.minimumPressDuration = 1.0
+        longPress.allowableMovement = 8
+        longPress.cancelsTouchesInView = false
+        longPress.delaysTouchesBegan = false
+        longPress.delaysTouchesEnded = false
+        longPress.requiresExclusiveTouchType = false
+        longPress.delegate = self
+        window.addGestureRecognizer(longPress)
+        self.debugMenuRecognizer = longPress
+        // === end bitdriftdev hook ===
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -169,6 +184,38 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             appNeedsResume = false
         }
     }
+
+    // === bitdriftdev helper: safe-corner detector + presenter ===
+    @objc private func showDebugMenuSafeCorner(_ gr: UILongPressGestureRecognizer) {
+        guard gr.state == .began, let win = window, let root = win.rootViewController else { return }
+
+        let loc = gr.location(in: win)
+        // Bottom-right 96pt square with 24pt margin
+        let box: CGFloat = 96, margin: CGFloat = 24
+        let minX = win.bounds.width  - box - margin
+        let minY = win.bounds.height - box - margin
+        guard loc.x >= minX, loc.y >= minY else { return }
+
+        // Reset recognizer so it releases the touch stream
+        if let r = debugMenuRecognizer { r.isEnabled = false; r.isEnabled = true }
+
+        let menu = DebugMenuViewController(style: UITableView.Style.insetGrouped)
+        let nav = UINavigationController(rootViewController: menu)
+        nav.modalPresentationStyle = UIModalPresentationStyle.formSheet
+
+        var presenter = root
+        while let presented = presenter.presentedViewController { presenter = presented }
+        presenter.present(nav, animated: true)
+    }
+    // === end bitdriftdev helper ===
     
 #endif
+}
+
+// Allow our long-press to recognize alongside everything else.
+extension SceneDelegate: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        true
+    }
 }
