@@ -1,5 +1,6 @@
 import Foundation
 import WMF
+import Capture
 
 @objc(WMFDonateFunnel) final class DonateFunnel: NSObject {
    
@@ -101,6 +102,9 @@ import WMF
         
         let event: DonateFunnel.Event = DonateFunnel.Event(activeInterface: activeInterface?.rawValue, action: action?.rawValue, actionData: actionDataString, platform: "ios", wikiID: project?.notificationsApiWikiIdentifier)
         EventPlatformClient.shared.submit(stream: .appDonorExperience, event: event)
+        
+        // bitdrift: log user taps
+                handleTapIfNeeded(activeInterface: activeInterface, action: action, actionData: actionData)
     }
     
     func logFundraisingCampaignModalImpression(project: WikimediaProject, metricsID: String) {
@@ -538,5 +542,66 @@ import WMF
     
     func logYearInReviewDidSeeApplePayDonateSuccessToast(metricsID: String) {
         logEvent(activeInterface: .wikiYiR, action: .successToastProfile, actionData: ["campaign_id": metricsID])
+    }
+    
+    // MARK: - bitdrift taps only
+
+        /// Returns true if this Action represents a *user tap/click* (not an impression or system event).
+        private func isTap(_ action: Action?) -> Bool {
+            guard let a = action else { return false }
+            switch a {
+            case .donateClick, .applePayClick, .webPayClick, .donateConfirmClick,
+                 .cancelClick, .closeClick, .laterClick, .alreadyDonatedClick,
+                 .articleReturnClick, .returnClick,
+                 .donateStartClick, .donateStartClickYir, .donorPolicyClick,
+                 .profileClick, .startClick, .continueClick, .nextClick, .learnClick,
+                 .accountEngageClick, .rejectClick, .shareClick,
+                 .reportProblemClick, .otherGiveClick, .faqClick, .taxInfoClick,
+                 .amountSelected, .settingClick,
+                 .feedbackSubmitClick:
+                return true
+
+            case .impression, .impressionSuppressed, .reminderToast,
+                 .entryError, .amountEntered, .submissionError,
+                 .applePayUIConfirm,
+                 .successToastSetting, .successToastArticle, .successToastProfile,
+                 .feedbackSubmitted:
+                return false
+            }
+        }
+
+        private func mergedFields(base: [String: String], with extra: [String: String]?) -> [String: String] {
+            guard let extra else { return base }
+            var merged = base
+            for (k, v) in extra { merged[k] = v }
+            return merged
+        }
+
+        /// Log a tap/click as an info-level event with useful context.
+    private func handleTapIfNeeded(
+        activeInterface: ActiveInterface?,
+        action: Action?,
+        actionData: [String: String]?
+    ) {
+        guard isTap(action), let action = action else { return }
+
+        let message: String = {
+            if let iface = activeInterface?.rawValue {
+                return "Tap: \(iface).\(action.rawValue)"
+            } else {
+                return "Tap: \(action.rawValue)"
+            }
+        }()
+
+        // <-- restored "action" field here
+        var fields: [String: String] = [
+            "action": action.rawValue
+        ]
+        if let iface = activeInterface?.rawValue {
+            fields["active_interface"] = iface
+        }
+        fields = mergedFields(base: fields, with: actionData)
+
+        Logger.logInfo(message, fields: fields)
     }
 }
