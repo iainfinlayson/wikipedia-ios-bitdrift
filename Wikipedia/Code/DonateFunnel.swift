@@ -1,5 +1,6 @@
 import Foundation
 import WMF
+import Capture
 
 @objc(WMFDonateFunnel) final class DonateFunnel: NSObject {
    
@@ -101,6 +102,10 @@ import WMF
         
         let event: DonateFunnel.Event = DonateFunnel.Event(activeInterface: activeInterface?.rawValue, action: action?.rawValue, actionData: actionDataString, platform: "ios", wikiID: project?.notificationsApiWikiIdentifier)
         EventPlatformClient.shared.submit(stream: .appDonorExperience, event: event)
+        
+        // log all events in bitdrift
+        logFunnelEvent(activeInterface: activeInterface, action: action, actionData: actionData)
+
     }
     
     func logFundraisingCampaignModalImpression(project: WikimediaProject, metricsID: String) {
@@ -539,4 +544,36 @@ import WMF
     func logYearInReviewDidSeeApplePayDonateSuccessToast(metricsID: String) {
         logEvent(activeInterface: .wikiYiR, action: .successToastProfile, actionData: ["campaign_id": metricsID])
     }
+    
+    // MARK: - bitdrift funnel event logging
+
+    /// Log every funnel event (taps, impressions, errors, etc.) to bitdrift.
+    private func logFunnelEvent(
+        activeInterface: ActiveInterface?,
+        action: Action?,
+        actionData: [String: String]?
+    ) {
+        guard let action = action else { return }
+
+        // Consistent, searchable message: event:applepay.donate_confirm_click
+        let msg: String = {
+            if let iface = activeInterface?.rawValue {
+                return "Event: \(iface).\(action.rawValue)"
+            } else {
+                return "Event: \(action.rawValue)"
+            }
+        }()
+
+        // Basic fields for filtering
+        var fields: [String: String] = ["action": action.rawValue]
+        if let iface = activeInterface?.rawValue { fields["active_interface"] = iface }
+
+        // Merge any extra data (e.g. campaign_id, recurring, etc.)
+        if let data = actionData {
+            for (k, v) in data { fields[k] = v }
+        }
+
+        Logger.logInfo(msg, fields: fields)
+    }
+
 }
