@@ -103,8 +103,9 @@ import Capture
         let event: DonateFunnel.Event = DonateFunnel.Event(activeInterface: activeInterface?.rawValue, action: action?.rawValue, actionData: actionDataString, platform: "ios", wikiID: project?.notificationsApiWikiIdentifier)
         EventPlatformClient.shared.submit(stream: .appDonorExperience, event: event)
         
-        // bitdrift: log user taps
-                handleTapIfNeeded(activeInterface: activeInterface, action: action, actionData: actionData)
+        // log all events in bitdrift
+        logFunnelEvent(activeInterface: activeInterface, action: action, actionData: actionData)
+
     }
     
     func logFundraisingCampaignModalImpression(project: WikimediaProject, metricsID: String) {
@@ -544,64 +545,35 @@ import Capture
         logEvent(activeInterface: .wikiYiR, action: .successToastProfile, actionData: ["campaign_id": metricsID])
     }
     
-    // MARK: - bitdrift taps only
+    // MARK: - bitdrift funnel event logging
 
-        /// Returns true if this Action represents a *user tap/click* (not an impression or system event).
-        private func isTap(_ action: Action?) -> Bool {
-            guard let a = action else { return false }
-            switch a {
-            case .donateClick, .applePayClick, .webPayClick, .donateConfirmClick,
-                 .cancelClick, .closeClick, .laterClick, .alreadyDonatedClick,
-                 .articleReturnClick, .returnClick,
-                 .donateStartClick, .donateStartClickYir, .donorPolicyClick,
-                 .profileClick, .startClick, .continueClick, .nextClick, .learnClick,
-                 .accountEngageClick, .rejectClick, .shareClick,
-                 .reportProblemClick, .otherGiveClick, .faqClick, .taxInfoClick,
-                 .amountSelected, .settingClick,
-                 .feedbackSubmitClick:
-                return true
-
-            case .impression, .impressionSuppressed, .reminderToast,
-                 .entryError, .amountEntered, .submissionError,
-                 .applePayUIConfirm,
-                 .successToastSetting, .successToastArticle, .successToastProfile,
-                 .feedbackSubmitted:
-                return false
-            }
-        }
-
-        private func mergedFields(base: [String: String], with extra: [String: String]?) -> [String: String] {
-            guard let extra else { return base }
-            var merged = base
-            for (k, v) in extra { merged[k] = v }
-            return merged
-        }
-
-        /// Log a tap/click as an info-level event with useful context.
-    private func handleTapIfNeeded(
+    /// Log every funnel event (taps, impressions, errors, etc.) to bitdrift.
+    private func logFunnelEvent(
         activeInterface: ActiveInterface?,
         action: Action?,
         actionData: [String: String]?
     ) {
-        guard isTap(action), let action = action else { return }
+        guard let action = action else { return }
 
-        let message: String = {
+        // Consistent, searchable message: event:applepay.donate_confirm_click
+        let msg: String = {
             if let iface = activeInterface?.rawValue {
-                return "Tap: \(iface).\(action.rawValue)"
+                return "Event: \(iface).\(action.rawValue)"
             } else {
-                return "Tap: \(action.rawValue)"
+                return "Event: \(action.rawValue)"
             }
         }()
 
-        // <-- restored "action" field here
-        var fields: [String: String] = [
-            "action": action.rawValue
-        ]
-        if let iface = activeInterface?.rawValue {
-            fields["active_interface"] = iface
-        }
-        fields = mergedFields(base: fields, with: actionData)
+        // Basic fields for filtering
+        var fields: [String: String] = ["action": action.rawValue]
+        if let iface = activeInterface?.rawValue { fields["active_interface"] = iface }
 
-        Logger.logInfo(message, fields: fields)
+        // Merge any extra data (e.g. campaign_id, recurring, etc.)
+        if let data = actionData {
+            for (k, v) in data { fields[k] = v }
+        }
+
+        Logger.logInfo(msg, fields: fields)
     }
+
 }
