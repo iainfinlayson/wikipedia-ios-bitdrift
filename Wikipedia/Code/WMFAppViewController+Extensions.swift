@@ -1447,21 +1447,21 @@ extension WMFAppViewController {
         
         let newVC = newTabNavVC.viewControllers[0]
         
-        guard newVC is WMFActivityTabViewController else {
+        guard newVC as? WMFActivityTabViewController != nil else {
             return
         }
         
-        if currentVC is ExploreViewController {
+        if currentVC as? ExploreViewController != nil {
             ActivityTabFunnel.shared.logTabBarSelected(from: .feed)
-        } else if currentVC is PlacesViewController {
+        } else if currentVC as? PlacesViewController != nil {
             ActivityTabFunnel.shared.logTabBarSelected(from: .places)
-        } else if currentVC is SavedViewController {
+        } else if currentVC as? SavedViewController != nil {
             ActivityTabFunnel.shared.logTabBarSelected(from: .saved)
-        } else if currentVC is WMFHistoryViewController {
+        } else if currentVC as? WMFHistoryViewController != nil {
             ActivityTabFunnel.shared.logTabBarSelected(from: .historyTab)
-        } else if currentVC is SearchViewController {
+        } else if currentVC as? SearchViewController != nil {
             ActivityTabFunnel.shared.logTabBarSelected(from: .search)
-        } else if currentVC is WMFSettingsViewController {
+        } else if currentVC as? WMFSettingsViewController != nil {
             ActivityTabFunnel.shared.logTabBarSelected(from: .settings)
         } else if let article = currentVC as? ArticleViewController {
             guard let title = article.articleURL.wmf_title?.denormalizedPageTitle else {
