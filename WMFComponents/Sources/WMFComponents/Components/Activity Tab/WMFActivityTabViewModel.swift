@@ -34,6 +34,7 @@ public final class WMFActivityTabViewModel: ObservableObject {
         public let todayTitle: String
         public let yesterdayTitle: String
         public let openArticle: String
+        public let deleteAccessibilityLabel: String
         public let totalEdits: String
         public let read: String
         public let edited: String
@@ -43,7 +44,7 @@ public final class WMFActivityTabViewModel: ObservableObject {
         public let emptyViewTitleLoggedOut: String
         public let emptyViewSubtitleLoggedOut: String
 
-        public init(userNamesReading: @escaping (String) -> String, noUsernameReading: String, totalHoursMinutesRead: @escaping (Int, Int) -> String, onWikipediaiOS: String, timeSpentReading: String, totalArticlesRead: String, week: String, articlesRead: String, topCategories: String, articlesSavedTitle: String, remaining: @escaping (Int) -> String, loggedOutTitle: String, loggedOutSubtitle: String, loggedOutPrimaryCTA: String, todayTitle: String, yesterdayTitle: String, openArticle: String, totalEdits: String, read: String, edited: String, saved: String, emptyViewTitleLoggedIn: String, emptyViewSubtitleLoggedIn: String, emptyViewTitleLoggedOut: String, emptyViewSubtitleLoggedOut: String) {
+        public init(userNamesReading: @escaping (String) -> String, noUsernameReading: String, totalHoursMinutesRead: @escaping (Int, Int) -> String, onWikipediaiOS: String, timeSpentReading: String, totalArticlesRead: String, week: String, articlesRead: String, topCategories: String, articlesSavedTitle: String, remaining: @escaping (Int) -> String, loggedOutTitle: String, loggedOutSubtitle: String, loggedOutPrimaryCTA: String, todayTitle: String, yesterdayTitle: String, openArticle: String, deleteAccessibilityLabel: String, totalEdits: String, read: String, edited: String, saved: String, emptyViewTitleLoggedIn: String, emptyViewSubtitleLoggedIn: String, emptyViewTitleLoggedOut: String, emptyViewSubtitleLoggedOut: String) {
             self.userNamesReading = userNamesReading
             self.noUsernameReading = noUsernameReading
             self.totalHoursMinutesRead = totalHoursMinutesRead
@@ -61,6 +62,7 @@ public final class WMFActivityTabViewModel: ObservableObject {
             self.todayTitle = todayTitle
             self.yesterdayTitle = yesterdayTitle
             self.openArticle = openArticle
+            self.deleteAccessibilityLabel = deleteAccessibilityLabel
             self.totalEdits = totalEdits
             self.read = read
             self.edited = edited
@@ -82,9 +84,12 @@ public final class WMFActivityTabViewModel: ObservableObject {
     @Published public var timelineViewModel: TimelineViewModel
     @Published public var emptyViewModel: WMFEmptyViewModel
     @Published public var shouldShowLogInPrompt: Bool = false
+    @Published var sections: [TimelineViewModel.TimelineSection] = []
 
     @Published var globalEditCount: Int?
+    public var isEmpty: Bool = false
     public var onTapGlobalEdits: (() -> Void)?
+    public var fetchDataCompleteAction: ((Bool) -> Void)?
 
     // MARK: - Init
 
@@ -118,6 +123,8 @@ public final class WMFActivityTabViewModel: ObservableObject {
         
         self.emptyViewModel = Self.generateEmptyViewModel(localizedStrings: localizedStrings, isLoggedIn: authenticationState == .loggedIn)
         
+        self.timelineViewModel.activityTabViewModel = self
+        
         Task {
             await self.updateShouldShowLoginPrompt()
         }
@@ -125,19 +132,28 @@ public final class WMFActivityTabViewModel: ObservableObject {
 
     // MARK: - Loading
 
-    public func fetchData() {
+    public func fetchData(fromAppearance: Bool = false) {
         Task {
             async let readTask: Void = articlesReadViewModel.fetch()
             async let savedTask: Void = articlesSavedViewModel.fetch()
             async let timelineTask: Void = timelineViewModel.fetch()
             async let editCountTask: Void = getGlobalEditCount()
-
+            
             _ = await (readTask, savedTask, timelineTask, editCountTask)
-
+            
             self.articlesReadViewModel = articlesReadViewModel
             self.articlesSavedViewModel = articlesSavedViewModel
             self.timelineViewModel = timelineViewModel
             self.globalEditCount = globalEditCount
+            
+            isEmpty =
+                articlesReadViewModel.hoursRead == 0 &&
+                articlesReadViewModel.minutesRead == 0 &&
+                articlesSavedViewModel.articlesSavedAmount == 0 &&
+                (globalEditCount == 0 || globalEditCount == nil) &&
+                shouldShowEmptyState
+            
+            fetchDataCompleteAction?(fromAppearance)
         }
     }
 
@@ -183,6 +199,9 @@ public final class WMFActivityTabViewModel: ObservableObject {
             await self.updateShouldShowLoginPrompt()
         }
         self.emptyViewModel = Self.generateEmptyViewModel(localizedStrings: localizedStrings, isLoggedIn: authState == .loggedIn)
+        if self.authenticationState != .loggedIn {
+            globalEditCount = nil
+        }
     }
 
     public var hoursMinutesRead: String {
@@ -225,44 +244,8 @@ public final class WMFActivityTabViewModel: ObservableObject {
             break
         }
     }
-}
-
-@MainActor
-extension WMFActivityTabViewModel {
-    public struct TimelineSection: Identifiable {
-        public let id: Date
-        public let title: String
-        public let subtitle: String
-        public let pages: [TimelineItem]
-    }
-
-    public var timelineSections: [TimelineSection] {
-        let calendar = Calendar.current
-        return timelineViewModel.timeline.keys.sorted(by: >).map { date in
-            let pages = timelineViewModel.timeline[date] ?? []
-            let sortedPages = pages.sorted(by: { $0.date > $1.date })
-
-            let title: String
-            let subtitle: String
-            if calendar.isDateInToday(date) {
-                title = localizedStrings.todayTitle
-                subtitle = formatDate(date)
-            } else if calendar.isDateInYesterday(date) {
-                title = localizedStrings.yesterdayTitle
-                subtitle = formatDate(date)
-            } else {
-                title = formatDate(date)
-                subtitle = ""
-            }
-
-            let filteredPages: [TimelineItem]
-            if authenticationState != .loggedIn {
-                filteredPages = sortedPages.filter { $0.itemType != .edit && $0.itemType != .saved }
-            } else {
-                filteredPages = sortedPages
-            }
-
-            return TimelineSection(id: date, title: title, subtitle: subtitle, pages: filteredPages)
-        }
+    
+    var shouldShowEmptyState: Bool {
+        return self.sections.count == 1 && (self.sections.first?.items.isEmpty ?? true)
     }
 }
