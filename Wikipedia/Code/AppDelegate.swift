@@ -29,22 +29,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let apiKey = ProcessInfo.processInfo.environment["BITDRIFT_API_KEY"] ?? ""
 
-     //   let configuration = Capture.Configuration(
-     //       // keep defaults for everything else
-     //       apiURL: URL(string: "https://api.bitdrift.dev")!
-     //   )
-
         Logger
             .start(
                 withAPIKey: apiKey,
                 sessionStrategy: .fixed(),
-                // configuration: configuration
             )?
             .enableIntegrations(
                 [.urlSession(), .cocoaLumberjack()],
                 disableSwizzling: true
             )
-
 
         registerUserDefaults()
         
